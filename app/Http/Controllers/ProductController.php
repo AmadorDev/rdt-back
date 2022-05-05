@@ -1,0 +1,263 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Product;
+use App\Models\Linea;
+use Illuminate\Support\Facades\File;
+use App\Http\Controllers\HelperControllers;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redirect;
+use Inertia\Inertia;
+use Validator;
+
+class ProductController extends Controller
+{
+    public $dir_name_product = '/web/images/products/';
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index(Request $request)
+    {
+        $filter = ["search" => $request->search];
+        return Inertia::render('Dashboard/Product/Index', [
+            'filters' => $filter,
+            'products' => Product::filter($filter)->with('translations','linea')
+             ->orderBy('created_at', 'desc')->paginate(env('PAGINATE')),
+        ]);
+
+       
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        $data = Linea::withTranslation('es')->get();
+        return Inertia::render('Dashboard/Product/Create', [
+            'lines' => $data,
+        ]);
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \App\Http\Requests\StoreProductRequest  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'tranlations.*.name' => 'required',
+            'tranlations.*.description' => 'required',
+            'linea_id' => 'required',
+            'photo' => 'mimes:jpeg,jpg,png,webp|max:' . env('SIZE_FILE'),
+        ]);
+
+        if ($validator->passes()) {
+            try {
+
+                $data = [];
+                $data["linea_id"] = $request["linea_id"];
+                foreach ($request["tranlations"] as $key => $value) {
+                    $data[$value["locale"]] = $value;
+                }
+                $product = Product::create($data);
+                if ($request->hasfile('photo')) {
+                    $path = $request->getSchemeAndHttpHost() . $this->dir_name_product;
+                    $p = $request->file('photo');
+                    $nameOrigin = $p->getClientOriginalName();
+                    $name = rand(0, 100) . time() . '.' . $p->getClientOriginalExtension();
+                    $url = $path . $name;
+                    $p->move(public_path() . $this->dir_name_product, $name);
+                    DB::table("products_image")->insert([
+                        "product_id" => $product->id,
+                        "url" => $url,
+                        "name" => $name,
+                    ]);
+                }
+                return Redirect::route("product");
+            } catch (\PDOException $e) {
+                return Redirect::back()->withErrors(json_encode($e->getMessage()))
+                    ->withInput();
+            }
+        }
+        return Redirect::back()->withErrors($validator->errors()->all())
+            ->withInput();
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  \App\Models\Product  $product
+     * @return \Illuminate\Http\Response
+     */
+    public function show(Product $product)
+    {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  \App\Models\Product  $product
+     * @return \Illuminate\Http\Response
+     */
+    public function edit(Product $product)
+    {
+        $data = Linea::withTranslation('es')->get();
+        return Inertia::render('Dashboard/Product/Edit', [
+            'lines' => $data,
+            'product' => $product,
+        ]);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \App\Http\Requests\UpdateProductRequest  $request
+     * @param  \App\Models\Product  $product
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, Product $product)
+    {
+        $validator = Validator::make($request->all(), [
+            'tranlations.*.name' => 'required',
+            'tranlations.*.description' => 'required',
+            'linea_id' => 'required',
+            'photo' => 'nullable|mimes:jpeg,jpg,png|max:' . env('SIZE_FILE'),
+        ]);
+
+        if ($validator->passes()) {
+            try {
+                $product->slug = '';
+                $product->save();
+                foreach ($request["tranlations"] as $key => $value) {
+                    DB::table("product_translations")->where("product_id", "=", $product->id)
+                        ->where("locale", "=", $value['locale'])->update([
+                        "name" => $value["name"],
+                        "description" => $value["description"],
+                    ]);
+                }
+
+                if ($request->hasfile('photo')) {
+                    /************************* delete file************ */
+                    $img_name = DB::table("products_image")->where("product_id", "=", $product->id)->value('name');
+                    $path = public_path($this->dir_name_product . $img_name);
+                    $del = new HelperControllers();
+                    $del->deleteFile($path);
+
+                    //***********************************************/
+                    $path = $request->getSchemeAndHttpHost() . $this->dir_name_product;
+                    $p = $request->file('photo');
+                    $nameOrigin = $p->getClientOriginalName();
+                    $name = rand(0, 100) . time() . '.' . $p->getClientOriginalExtension();
+                    $url = $path . $name;
+                    $p->move(public_path() . $this->dir_name_product, $name);
+                    DB::table("products_image")->where("product_id", "=", $product->id)
+                        ->update([
+                            "url" => $url,
+                            "name" => $name,
+                        ]);
+                }
+                return Redirect::route("product");
+            } catch (\Throwable $e) {
+                \Log::debug($e);
+                return Redirect::back()->withErrors(json_encode($e->getMessage()))
+                    ->withInput();
+            }
+        }
+        return Redirect::back()->withErrors($validator->errors()->all())
+            ->withInput();
+    }
+
+    //****************************** images ******************************/
+    public function ImagesIndex(Product $product)
+    {
+        return Inertia::render('Dashboard/Product/Image', [
+            
+            'images' => DB::table("products_image")->where("product_id", "=", $product->id)->get(),
+            'product' => ["id"=>$product->id,"name"=>$product->name],
+        ]);
+    }
+
+    public function ImagesStore(Request $request, Product $product)
+    {
+        $validator = Validator::make($request->all(), [
+          
+            'photo' => 'required',
+            'photo.*' => 'mimes:jpeg,jpg,png|max:' . env('SIZE_FILE'),
+        ]);
+
+        $path = $request->getSchemeAndHttpHost() . $this->dir_name_product;
+
+        try {
+            if ($validator->passes()) {
+                if ($request->hasfile('photo')) {
+                    foreach ($request->file('photo') as $p) {
+                        $nameOrigin = $p->getClientOriginalName();
+                        $name = rand(0, 100) . time() . '.' . $p->getClientOriginalExtension();
+
+                        $url = $path . $name;
+                        $p->move(public_path() .$this->dir_name_product, $name);
+                        DB::table("products_image")->insert(["name" => $name, "url" => $url,"product_id"=>$product->id]); 
+                    }
+
+                }
+                return response()->json(['data' => $path, "msg" => "OK"]);
+            }
+
+            return response()->json(['error' => $validator->errors()->all()]);
+        } catch (\Exception$e) {
+            return response()->json(['error' => $e]);
+        }
+    }
+
+
+    public function ImageDestroy($id)
+    {
+        try {
+            $name = DB::table('products_image')->where("id", "=", $id)->value('name');
+            $path = public_path($this->dir_name_product . $name);
+            
+            if (File::exists($path)) {
+                File::delete($path);
+                // unlink($path);
+                $im = DB::table('products_image')->where('id', '=', $id)->delete();
+            }
+             $im = DB::table('products_image')->where('id', '=', $id)->delete();
+
+            return redirect()->back();
+        } catch (\Throwable $th) {
+            return Redirect::back()
+                ->withErrors($th->getMessage())
+                ->withInput();
+        }
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  \App\Models\Product  $product
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy(Product $product)
+    {
+        try {
+            $del = new HelperControllers();
+            $img_name = DB::table("products_image")->where("product_id", "=", $product->id)->value('name');
+            $path = public_path($this->dir_name_product . $img_name);
+            $del->deleteFile($path);
+            $product->delete();
+            return Redirect::route('product');
+        } catch (\Throwable $th) {
+            return Redirect::route('product')->withErrors(json_encode($th->getMessage()))->withInput();
+        }
+    }
+}
