@@ -95,11 +95,14 @@
         <li :class="linesMenu.includes($page.url) ? 'link-active ' : ''">
           <Link :href="route('line')">Lineas</Link>
         </li>
-        <li :class="$page.url.startsWith('/lines/events') ? 'link-active ' : ''">
+         <!-- <li :class="$page.url.startsWith('/lines/events') ? 'link-active ' : ''">
           <Link :href="route('event')">Testing Imagen</Link>
-        </li>
-        <li :class="$page.url.startsWith('/lines/videos') ? 'link-active ' : ''">
+        </li> -->
+        <!-- <li :class="$page.url.startsWith('/lines/videos') ? 'link-active ' : ''">
           <Link :href="route('video')">Testing videos</Link>
+        </li> -->
+        <li :class="$page.url.startsWith('/lines/hair-type') ? 'link-active ' : ''">
+          <Link :href="route('hair_type')">Tipo de cabello</Link>
         </li>
       </ul>
     </li>
@@ -152,6 +155,7 @@ export default {
       ],
       linesMenu: [
         `${
+          !this.$page.url.includes("/lines/hair-type") &&
          !this.$page.url.includes("/lines/events") &&
           !this.$page.url.includes("/lines/video") &&
           this.$page.url.includes("/lines")

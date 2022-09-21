@@ -128,8 +128,14 @@
                   >
                     <i class="fa fa-trash-o fa-lg" aria-hidden="true"></i>
                   </Badge>
+                   <Link :href="route('hair_type.add', item.id)">
+                    <Badge class="bg-gray-300">
+                      
+                      <i class="fa fa-info fa-lg" aria-hidden="true"></i>
+                    </Badge>
+                  </Link>
 
-                  <Link :href="route('event.add', item.id)">
+                  <!-- <Link :href="route('event.add', item.id)">
                     <Badge class="bg-gray-300">
                       
                       <i
@@ -137,15 +143,15 @@
                         aria-hidden="true"
                       ></i>
                     </Badge>
-                  </Link>
-                  <Link :href="route('video.add', item.id)">
+                  </Link> -->
+                  <!-- <Link :href="route('video.add', item.id)">
                     <Badge class="bg-gray-200">
                        <i
                         class="fa fa-text-height fa-lg cursor-pointer"
                         aria-hidden="true"
                       ></i>
                     </Badge>
-                  </Link>
+                  </Link> -->
                 </td>
               </tr>
             </template>

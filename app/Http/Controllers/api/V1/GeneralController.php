@@ -4,6 +4,7 @@ namespace App\Http\Controllers\api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Models\Linea;
+use App\Models\Info;
 use App\Models\LineaEvent;
 use App\Models\LineaVideo;
 use App\Models\Product;
@@ -65,7 +66,6 @@ class GeneralController extends Controller
     public function getMenuTree(Request $request, $id)
     {
         \App::setLocale($request->locale);
-        \Log::debug($id);
         try {
             // $products = Product::where("linea_id","=", $id)->get();
             $products = Product::select("products.slug", "product_translations.name as product","product_translations.locale")
@@ -83,9 +83,12 @@ class GeneralController extends Controller
 
             $videos = LineaVideo::where("linea_id", "=", $id)->get();
 
+            $hair_types = Info::where("infos.linea_id","=", $id)->get();
+
             return response()->json(["products" => $products,
                 "events"                            => $events,
                 "videos"                            => $videos,
+                "hair_types"                        => $hair_types,
                 "status"                            => 'OK'], 200);
         } catch (Exception $e) {
             return response()->json(["message" => $e], 500);

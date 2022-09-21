@@ -7,6 +7,7 @@ use Inertia\Inertia;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\LineaController;
+use App\Http\Controllers\InfoController;
 use App\Http\Controllers\LineaEventController;
 use App\Http\Controllers\LineaVideoController;
 use App\Http\Controllers\ProductController;
@@ -77,7 +78,13 @@ Route::group(['middleware' => ['auth:sanctum']], function(){
     Route::post("lines/events/image/{lineEvent}", [LineaEventController::class, "ImageStore"])->name('testing_image.store');
     Route::delete("lines/events/image/{imageId}", [LineaEventController::class, "ImageDestroy"])->name('testing_image.destroy');
 
-
+    //lines - info
+    Route::get("lines/hair-type", [InfoController::class, "index"])->name('hair_type');
+    Route::get("lines/hair-type/create/{line}", [InfoController::class, "create"])->name('hair_type.add');
+    Route::post("lines/hair-type", [InfoController::class, "store"])->name('hair_type.store');
+    Route::get("lines/hair-type/edit/{info}", [InfoController::class, "edit"])->name('hair_type.edit');
+    Route::post("lines/hair-type/update/{info}", [InfoController::class, "update"])->name('hair_type.update');
+    Route::delete("lines/hair-type/destroy/{info}", [InfoController::class, "destroy"])->name('hair_type.destroy');
 
       
     Route::get("lines/videos", [LineaVideoController::class, "index"])->name('video');
@@ -86,6 +93,8 @@ Route::group(['middleware' => ['auth:sanctum']], function(){
     Route::get("lines/videos/edit/{id}", [LineaVideoController::class, "edit"])->name('video.edit');
     Route::put("lines/videos/update/{line}", [LineaVideoController::class, "update"])->name('video.update');
     Route::delete("lines/videos/destroy/{line}", [LineaVideoController::class, "destroy"])->name('video.destroy');
+   
+
 
 
     Route::get("products", [ProductController::class, "index"])->name('product');

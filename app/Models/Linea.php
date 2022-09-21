@@ -33,8 +33,6 @@ class Linea extends Model implements TranslatableContract
     {
         $query->whereTranslationLike('name', '%' . $filters['search'] . '%');
         $query->orWhereTranslationLike('description', '%' . $filters['search'] . '%');
-       
-
     }
 
     public function category(){
