@@ -116,7 +116,8 @@ class NewController extends Controller
         try {
             \App::setLocale($request->locale);
             $event = Event::where("slug", "=", $slug)->get();
-            return response()->json(["rows" => count($event), "data" => count($event) > 0 ? $event[0] : []]);
+            $images = \DB::table("event_images")->where("event_id","=",$event->id)->get();
+            return response()->json(["rows" => count($event), "data" => count($event) > 0 ? $event[0] : [],"images"=>$images]);
         } catch (\Throwable $th) {
             return response()->json(["rows" => 0]);
         }
