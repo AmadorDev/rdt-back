@@ -34,6 +34,21 @@ class CreateEventsTable extends Migration
             $table->unique(['event_id', 'locale']);
             $table->foreign('event_id')->references('id')->on('events')->onDelete('cascade');
         });
+
+
+        Schema::create('event_images', function (Blueprint $table) {
+            $table->id();
+            $table->text("url");
+            $table->string("name", 80)->nullable();
+            $table->boolean("status")->default(true);
+            $table->unsignedBigInteger('event_id');
+            $table->foreign('event_id')->references('id')->on('events')
+                ->constrained()
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
+            $table->timestamps();
+        });
+        
     }
 
     /**

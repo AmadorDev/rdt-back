@@ -40,8 +40,47 @@ class EventController extends Controller
     {
         return Inertia::render('Dashboard/News/Events/Create', [
 
-            
+            "SIZE_FILE_NEW"=> env("SIZE_FILE_NEW")
         ]);
+    }
+    public function images($id)
+    {
+        return Inertia::render('Dashboard/News/Events/Images', [
+
+            "SIZE_FILE_NEW"=> env("SIZE_FILE_NEW"),
+            "images"=>DB::table("event_images")->where("event_id","=",$id)->get(),
+            "event_id"=>$id,
+        ]);
+    }
+
+    public function imagesStore(Request $request){
+        $validator = Validator::make($request->all(), [
+          
+            'photo' => 'required',
+            'photo.*' => 'mimes:jpeg,jpg,png|max:' . env('SIZE_FILE'),
+        ]);
+
+        $path = $request->getSchemeAndHttpHost() . $this->dir_name_event;
+
+        try {
+            if ($validator->passes()) {
+                if ($request->hasfile('photo')) {
+                    foreach ($request->file('photo') as $p) {
+                        $nameOrigin = $p->getClientOriginalName();
+                        $name = rand(0, 100) . time() . '.' . $p->getClientOriginalExtension();
+                        $url = $path . $name;
+                        $p->move(public_path() .$this->dir_name_event, $name);
+                        DB::table("event_images")->insert(["name" => $name, "url" => $url,"event_id"=>$request->event_id]);
+                    }
+
+                }
+                return response()->json(['data' => $path, "msg" => "OK"]);
+            }
+
+            return response()->json(['error' => $validator->errors()->all()]);
+        } catch (\Exception$e) {
+            return response()->json(['error' => $e]);
+        }
     }
 
     /**
@@ -79,10 +118,8 @@ class EventController extends Controller
                     $url = $path . $name;
                     $p->move(public_path() . $this->dir_name_event, $name);
                 
-
-                    $event->url = $url;
-                    $event->url_name = $name;
                     $event->save();
+                    DB::table("event_images")->insert(["name" => $name, "url" => $url,"event_id"=>$event->id]);
                 }
                 return Redirect::route('new_event');
             } catch (\Throwable $e) {
@@ -205,6 +242,21 @@ class EventController extends Controller
             return Redirect::back()
                 ->withErrors('Error en el servidor')
                 ->withInput();
+
+        } catch (\Throwable $th) {
+            return Redirect::back()
+                ->withErrors(json_encode($th->getMessage()))
+                ->withInput();
+        }
+    }
+
+    public function imagesDestroy($id)
+    {
+        try {
+            /************************* delete file************ */
+            
+            \DB::table("event_images")->where("id","=",$id)->delete();
+            return Redirect::back();
 
         } catch (\Throwable $th) {
             return Redirect::back()

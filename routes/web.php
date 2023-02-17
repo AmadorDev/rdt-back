@@ -145,9 +145,16 @@ Route::group(['middleware' => ['auth:sanctum']], function(){
     Route::get("news/events", [EventController::class, "index"])->name('new_event');
     Route::get("news/events/add", [EventController::class, "create"])->name('new_event.add');
     Route::post("news/events", [EventController::class, "store"])->name('new_event.store');
+    
     Route::get("news/events/edit/{event}", [EventController::class, "edit"])->name('new_event.edit');
     Route::post("news/events/update/{event}", [EventController::class, "update"])->name('new_event.update');
     Route::delete("news/events/destroy/{event}", [EventController::class, "destroy"])->name('new_event.destroy');
+
+    //event upload images
+    Route::get("news/events/images/{id}", [EventController::class, "images"])->name('new_event.image');
+    Route::post("news/events/images/upload", [EventController::class, "imagesStore"])->name('new_event_images.store');
+    Route::delete("news/events/images/upload/{id}", [EventController::class, "imagesDestroy"])->name('new_event_images.destroy');
+
 
     Route::get("news/galleries", [GaleryController::class, "index"])->name('new_galery');
     Route::post("news/galleries", [GaleryController::class, "store"])->name('new_galery.store');

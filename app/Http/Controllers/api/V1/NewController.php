@@ -90,6 +90,7 @@ class NewController extends Controller
                     "image" => $v->url,
                     "slug" => $v->slug,
                     "title" => $v->title,
+                    "images"=>\DB::table("event_images")->where("event_id","=",$v->id)->get()
                 ]);
             }
 

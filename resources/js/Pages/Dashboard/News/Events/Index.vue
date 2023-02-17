@@ -91,13 +91,15 @@
                   </Badge>
                   
 
-                  <Badge @click="showDialog(item.url)" class="bg-gray-600 text-white">
+                  <Link :href="route('new_event.image',item.id)">
+                    <Badge  class="bg-gray-600 text-white">
                     <i
                     class="fa fa-picture-o fa-lg "
                     
                     aria-hidden="true"
                   ></i>
                   </Badge>
+                  </Link>
 
                   <Link :href="route('new_event.edit', item.id)">
                     <Badge class="bg-gray-600 text-white">

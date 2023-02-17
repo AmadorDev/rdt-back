@@ -17,14 +17,14 @@
             <Label>Fecha del evento </Label>
             <JetInput v-model="form.date_event" type="date"></JetInput>
           </div>
-          <div class="md:w-1/2">
+          <!-- <div class="md:w-1/2">
             <Label>Imagen</Label>
             <JetInput
               @input="form.photo = $event.target.files[0]"
               type="file"
               class="py-1"
             ></JetInput>
-          </div>
+          </div> -->
         </div>
 
         <div class="flex flex-col md:flex-row md:space-x-2">
