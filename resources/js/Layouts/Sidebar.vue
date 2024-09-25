@@ -1,21 +1,17 @@
-
 <template>
   <!-- Contenedor -->
   <ul id="accordion" class="accordion">
-    <li
-      @click="ToggleLink($event)"
-      :class="$page.url === '/dashboard' ? 'link-active' : ''"
-    >
+    <li @click="ToggleLink($event)" :class="$page.url === '/dashboard' ? 'link-active' : ''">
       <Link :href="route('dashboard')">
-        <div class="link">
-          <i class="fa fa-home" aria-hidden="true"></i>
+      <div class="link">
+        <i class="fa fa-home" aria-hidden="true"></i>
 
-          Dashboard
-        </div>
+        Dashboard
+      </div>
       </Link>
     </li>
 
-    <li
+    <!-- <li
       @click="ToggleLink($event)"
       :class="$page.url.startsWith('/news') ? 'open ' : ''"
     >
@@ -41,46 +37,57 @@
         </li>
       
       </ul>
-    </li>
+    </li> -->
 
-   
-    <li
-      @click="ToggleLink($event)"
-      :class="$page.url.startsWith('/salons') ? 'link-active' : ''"
-    >
+
+    <li @click="ToggleLink($event)" :class="$page.url.startsWith('/salons') ? 'link-active' : ''">
       <Link :href="route('salon')">
-        <div class="link">
-          <i class="fa fa-tasks" aria-hidden="true"></i>
+      <div class="link">
+        <i class="fa fa-tasks" aria-hidden="true"></i>
 
-          Salones
-        </div>
+        Salones
+      </div>
       </Link>
     </li>
-      <li
-      @click="ToggleLink($event)"
-      :class="$page.url.startsWith('/banners') ? 'link-active' : ''"
-    >
+    <li @click="ToggleLink($event)" :class="$page.url.startsWith('/banners') ? 'link-active' : ''">
       <Link :href="route('banner')">
-        <div class="link">
-          <i class="fa fa-tasks" aria-hidden="true"></i>
-          Banners
-        </div>
+      <div class="link">
+        <i class="fa fa-tasks" aria-hidden="true"></i>
+        Banners
+      </div>
       </Link>
     </li>
-    <li
-      @click="ToggleLink($event)"
-      :class="$page.url.startsWith('/categories') ? 'link-active' : ''"
-    >
-      <Link :href="route('category')">
-        <div class="link">
-          <i class="fa fa-tasks" aria-hidden="true"></i>
-
-          Categorias
-        </div>
+    <li @click="ToggleLink($event)" :class="$page.url.startsWith('/lines') ? 'link-active' : ''">
+      <Link :href="route('line')">
+      <div class="link">
+        <i class="fa fa-tasks" aria-hidden="true"></i>
+        Categorias
+      </div>
       </Link>
     </li>
 
-    <li
+    <li @click="ToggleLink($event)" :class="$page.url.startsWith('/products/lines') ? 'link-active' : ''">
+      <Link :href="route('product')">
+      <div class="link">
+        <i class="fa fa-tasks" aria-hidden="true"></i>
+        Productos de linea
+      </div>
+      </Link>
+    </li>
+    <li @click="ToggleLink($event)" :class="$page.url.startsWith('/products/cabs') ? 'link-active' : ''">
+      <Link :href="route('cab')">
+      <div class="link">
+        <i class="fa fa-tasks" aria-hidden="true"></i>
+        Productos de cabina
+      </div>
+      </Link>
+    </li>
+
+
+
+
+
+    <!-- <li
       @click="ToggleLink($event)"
       :class="$page.url.startsWith('/lines') ? 'open ' : ''"
     >
@@ -95,19 +102,19 @@
         <li :class="linesMenu.includes($page.url) ? 'link-active ' : ''">
           <Link :href="route('line')">Lineas</Link>
         </li>
-         <!-- <li :class="$page.url.startsWith('/lines/events') ? 'link-active ' : ''">
+         <li :class="$page.url.startsWith('/lines/events') ? 'link-active ' : ''">
           <Link :href="route('event')">Testing Imagen</Link>
-        </li> -->
-        <!-- <li :class="$page.url.startsWith('/lines/videos') ? 'link-active ' : ''">
+        </li> 
+         <li :class="$page.url.startsWith('/lines/videos') ? 'link-active ' : ''">
           <Link :href="route('video')">Testing videos</Link>
-        </li> -->
+        </li>
         <li :class="$page.url.startsWith('/lines/hair-type') ? 'link-active ' : ''">
           <Link :href="route('hair_type')">Tipo de cabello</Link>
         </li>
       </ul>
-    </li>
+    </li> -->
 
-    <li
+    <!-- <li
       @click="ToggleLink($event)"
       :class="$page.url.startsWith('/product') ? 'open ' : ''"
     >
@@ -121,15 +128,15 @@
       >
         <li :class="productMenu.includes($page.url) ? 'link-active ' : ''">
           <Link href="/products">Productos</Link>
-        </li>
-        <!-- <li :class="$page.url.startsWith('/products/events') ? 'link-active ' : ''">
+        </li> 
+         <li :class="$page.url.startsWith('/products/events') ? 'link-active ' : ''">
           <Link :href="route('product_event')">Eventos</Link>
         </li>
         <li :class="$page.url.startsWith('/products/videos') ? 'link-active ' : ''">
           <Link :href="route('product_video')">Videos</Link>
-        </li> -->
+        </li> 
       </ul>
-    </li>
+    </li> -->
   </ul>
 
 </template>
@@ -143,38 +150,35 @@ export default {
   },
   data() {
     return {
-       newsMenu: [
-        `${
-         !this.$page.url.includes("/news/events") &&
+      newsMenu: [
+        `${!this.$page.url.includes("/news/events") &&
           !this.$page.url.includes("/news/galleries") &&
-           !this.$page.url.includes("/news/latest") &&
+          !this.$page.url.includes("/news/latest") &&
           this.$page.url.includes("/news")
-            ? this.$page.url
-            : undefined
+          ? this.$page.url
+          : undefined
         }`,
       ],
       linesMenu: [
-        `${
-          !this.$page.url.includes("/lines/hair-type") &&
-         !this.$page.url.includes("/lines/events") &&
+        `${!this.$page.url.includes("/lines/hair-type") &&
+          !this.$page.url.includes("/lines/events") &&
           !this.$page.url.includes("/lines/video") &&
           this.$page.url.includes("/lines")
-            ? this.$page.url
-            : undefined
+          ? this.$page.url
+          : undefined
         }`,
       ],
       productMenu: [
-        `${
-         !this.$page.url.includes("/products/events") &&
-         !this.$page.url.includes("/products/videos") &&
+        `${!this.$page.url.includes("/products/events") &&
+          !this.$page.url.includes("/products/videos") &&
           this.$page.url.includes("products")
-            ? this.$page.url
-            : undefined
+          ? this.$page.url
+          : undefined
         }`,
       ],
-     
 
-      
+
+
     };
   },
   methods: {
@@ -205,5 +209,4 @@ export default {
 };
 </script>
 
-<style>
-</style>
+<style></style>

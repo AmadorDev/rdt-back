@@ -87,7 +87,10 @@
                 Salon
               </th>
               <th class="px-4 py-2" style="background-color: #f8f8f8">
-                Distrito | Cuidad | País
+                Dirección
+              </th>
+              <th class="px-4 py-2" style="background-color: #f8f8f8">
+                lat, lng
               </th>
               <th class="px-4 py-2 text-center" style="background-color: #f8f8f8">acciones</th>
             </tr>
@@ -96,7 +99,8 @@
             <template v-for="(item, index) in salons?.data" :key="index">
               <tr class="hover:bg-gray-100 border-b border-gray-200 py-2">
                 <td class="px-4 py-2">{{ item.name }}</td>
-                <td class="px-4 py-2">{{ item.city }} - {{ item.district }} - {{ item.country }}</td>
+                <td class="px-4 py-2">{{ item.address }}</td>
+                <td class="px-4 py-2">{{ item.lat }}  ,  {{ item.lng }}</td>
 
                 <td class="px-4 py-2 flex justify-center items-center space-x-2">
                   <Badge

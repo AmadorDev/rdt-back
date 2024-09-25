@@ -35,10 +35,9 @@ class Linea extends Model implements TranslatableContract
         $query->orWhereTranslationLike('description', '%' . $filters['search'] . '%');
     }
 
-    public function category(){
-        return $this->belongsTo(Category::class);
+    public function product(){
+        return $this->belongsTo(Product::class);
         
     }
-   
-    
+ 
 }

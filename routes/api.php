@@ -34,6 +34,7 @@ Route::prefix('v1')->group(function () {
     Route::post("categories", [CategoryController::class, "store"]);
 
 //**************lineas********************
+    Route::get("menu", [LineaController::class, "all"]);
     Route::get("lineas", [LineaController::class, "index"]);
 
     Route::post("lineas", [LineaController::class, "store"]);
@@ -44,6 +45,8 @@ Route::prefix('v1')->group(function () {
 
 //****************** products *********************
     Route::get("products", [ProductController::class, "index"]);
+    Route::get("products/search/{id}", [ProductController::class, "searchById"]);
+    Route::get("products/{category}", [ProductController::class, "ProductByCategory"]);
 
     Route::post("products", [ProductController::class, "store"]);
     Route::post("products/files", [ProductController::class, "storeFiles"]);
@@ -102,13 +105,11 @@ Route::prefix('v1')->group(function () {
         //events--
         Route::get("events", [NewController::class, "getEvents"]);
         Route::get("events/{slug}", [NewController::class, "getDetailEvent"]);
-        
+
         Route::get("galleries", [NewController::class, "getGalleries"]);
         //******************************?:-----------------latest------------------  //
         Route::get("latest", [NewController::class, "getLatest"]);
         Route::get("banners", [NewController::class, "getBannerDefault"]);
-        
-        
 
         //
         Route::get("test/{line}", [LineaController::class, "resultTest"]);

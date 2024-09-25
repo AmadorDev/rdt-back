@@ -52,7 +52,7 @@
               text-gray-400
             "
           >
-            <i class="fa fa-search" aria-hidden="true"></i>
+            <i class="fa fa-search" aria-hidden="true" @click=""></i>
           </div>
         </div>
       </div>
@@ -74,35 +74,27 @@
                 class="px-4 py-2 bg-gray-500"
                 style="background-color: #f8f8f8"
               >
-                Producto
+                Producto 
               </th>
               <th
                 class="px-4 py-2 bg-gray-500"
                 style="background-color: #f8f8f8"
               >
-                linea
-              </th>
-              <th class="px-4 py-2" style="background-color: #f8f8f8">
-                Descripción
+                Linea
               </th>
               <th
                 class="px-4 py-2 space-x-3 text-center"
                 style="background-color: #f8f8f8"
               >
-                acciones
+                
               </th>
             </tr>
           </thead>
           <tbody class="text-sm font-normal text-gray-700">
             <template v-for="(item, index) in products?.data" :key="index">
               <tr class="hover:bg-gray-100 border-b border-gray-200 py-2">
-                <td class="px-4 py-2">{{ item.name }}</td>
-                <td class="px-4 py-2">{{ item.linea.name }}</td>
-
-                <td class="px-4 py-2">
-                  {{ item.description.slice(0, 60) }}...
-                </td>
-
+                <td class="px-4 py-2">{{ item.name }} {{ item.id }}</td>
+                <td class="px-4 py-2">{{ item.line?.name ?? '' }}</td>
                 <td
                   class="
                     px-4

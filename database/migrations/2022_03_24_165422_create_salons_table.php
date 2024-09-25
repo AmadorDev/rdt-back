@@ -15,18 +15,13 @@ class CreateSalonsTable extends Migration
     {
         Schema::create('salons', function (Blueprint $table) {
             $table->id();
-            $table->string("slug", 80);
+            $table->string("slug", 80)->nullable();
             $table->string('name',150);
-            $table->string('district',100);
-            $table->string('city',100);
-            $table->string('address',150);
-            $table->string('country',50);
-       
+            $table->string('address',200);
             $table->boolean('check_google_map')->default(false);
             $table->decimal('lat',11,8);
             $table->decimal('lng',11,8);
             $table->boolean("status")->default(true);
-
             $table->timestamps();
         });
 

@@ -31,6 +31,17 @@
           </div>
         </div>
 
+        <div class="flex flex-col md:flex-row md:space-x-2">
+          <div class="md:w-1/2">
+            <Label>Nombre  2 (opcional) </Label>
+            <JetInput v-model="form.short_name"></JetInput>
+          </div>
+          <div class="md:w-1/2">
+            <Label>Nombre 2 en Inglés  (opcional)</Label>
+            <JetInput v-model="form.short_name_en"></JetInput>
+          </div>
+        </div>
+
         <div class="">
           <Label>Descripción </Label>
           <JetTextAreaVue v-model="form.description"></JetTextAreaVue>
@@ -113,13 +124,19 @@ export default {
   data() {
     return {
       form: this.$inertia.form({
-        linea_id:this.line.id,
+        line_id:this.line.id,
         category_id: this.line.category_id,
         featured:this.line.featured?true:false,
         name: this.line.translations.filter(item =>item.locale === 'es')[0].name,
         description: this.line.translations.filter(item =>item.locale === 'es')[0].description,
         name_en: this.line.translations.filter(item =>item.locale === 'en')[0].name,
         description_en: this.line.translations.filter(item =>item.locale === 'en')[0].description,
+        short_name: this.line.translations.filter(item =>item.locale === 'es')[0].short_name,
+        short_name_en: this.line.translations.filter(item =>item.locale === 'en')[0].short_name,
+
+
+       
+
       }),
     };
   },
@@ -132,11 +149,13 @@ export default {
           {
             name: this.form.name,
             description: this.form.description,
+            short_name: this.form.short_name,
             locale: "es",
           },
           {
             name: this.form.name_en,
             description: this.form.description_en,
+            short_name: this.form.short_name_en,
             locale: "en",
           },
         ],

@@ -15,21 +15,9 @@
             <Label>Nombre</Label>
             <JetInput v-model="form.name"></JetInput>
           </div>
-          <div class="flex-1">
-            <Label>Distrito</Label>
-            <JetInput v-model="form.district"></JetInput>
-          </div>
+   
         </div>
-        <div class="flex flex-col md:flex-row md:space-x-2">
-          <div class="flex-1">
-            <Label>Ciudad</Label>
-            <JetInput v-model="form.city"></JetInput>
-          </div>
-          <div class="flex-1">
-            <Label>País</Label>
-            <JetInput v-model="form.country"></JetInput>
-          </div>
-        </div>
+
         <div class="">
           <Label>Dirección</Label>
           <JetInput v-model="form.address"></JetInput>
@@ -79,10 +67,7 @@ export default {
     return {
       form: this.$inertia.form({
         name: this.salon.name,
-        district: this.salon.district,
-        city: this.salon.city,
         address: this.salon.address,
-        country: this.salon.country,
         lat: this.salon.lat,
         lng: this.salon.lng,
       }),

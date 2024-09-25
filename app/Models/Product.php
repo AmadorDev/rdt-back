@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
+use App\Models\Linea;
 use Astrotomic\Translatable\Contracts\Translatable as TranslatableContract;
 use Astrotomic\Translatable\Translatable;
 use Cviebrock\EloquentSluggable\Sluggable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Linea;
 
 class Product extends Model implements TranslatableContract
 {
@@ -15,7 +15,7 @@ class Product extends Model implements TranslatableContract
     use Translatable;
     use Sluggable;
     public $translatedAttributes = ['name', 'description'];
-    protected $guarded           = [];
+    protected $guarded = [];
 
     public function sluggable(): array
     {
@@ -30,13 +30,18 @@ class Product extends Model implements TranslatableContract
     {
         $query->whereTranslationLike('name', '%' . $filters['search'] . '%');
         $query->orWhereTranslationLike('description', '%' . $filters['search'] . '%');
-       
 
     }
 
-    public function linea(){
+    // public function linea()
+    // {
+    //     return $this->belongsTo(Linea::class);
+
+    // }
+
+    public function line(){
         return $this->belongsTo(Linea::class);
         
     }
-   
+
 }

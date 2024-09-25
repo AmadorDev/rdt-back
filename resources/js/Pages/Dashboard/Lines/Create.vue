@@ -29,6 +29,17 @@
           </div>
         </div>
 
+
+        <div class="flex flex-col md:flex-row md:space-x-2">
+          <div class="md:w-1/2">
+            <Label>Nombre  2 (opcional) </Label>
+            <JetInput v-model="form.short_name"></JetInput>
+          </div>
+          <div class="md:w-1/2">
+            <Label>Nombre 2 en Inglés  (opcional)</Label>
+            <JetInput v-model="form.short_name_en"></JetInput>
+          </div>
+        </div>
         <div class="">
           <Label>Descripción </Label>
           <JetTextAreaVue v-model="form.description"></JetTextAreaVue>
@@ -39,8 +50,7 @@
         </div>
 
         <div class="flex justify-start items-center py-5">
-          <div
-            class="
+          <div class="
             
               bg-white
               border-2
@@ -53,20 +63,16 @@
               items-center
               mr-2
               focus-within:border-blue-500
-            "
-          >
-            <input type="checkbox" class="opacity-0 absolute cursor-pointer" id="featured" v-model="form.featured"/>
-            <svg
-              class="
+            ">
+            <input type="checkbox" class="opacity-0 absolute cursor-pointer" id="featured" v-model="form.featured" />
+            <svg class="
                 fill-current
                 hidden
                 w-4
                 h-4
                 text-indigo-500
                 pointer-events-none
-              "
-              viewBox="0 0 20 20"
-            >
+              " viewBox="0 0 20 20">
               <path d="M0 11l2-2 5 5L18 3l2 2L7 18z" />
             </svg>
           </div>
@@ -115,6 +121,8 @@ export default {
         description: "",
         name_en: "",
         description_en: "",
+        short_name: "",
+        short_name_en: "",
         featured: false,
       }),
     };
@@ -123,22 +131,24 @@ export default {
     store() {
       let data = {
         category_id: this.form.category_id,
-         featured: this.form.featured,
+        featured: this.form.featured,
         tranlations: [
           {
             name: this.form.name,
             description: this.form.description,
+            short_name: this.form.short_name,
             locale: "es",
           },
           {
             name: this.form.name_en,
             description: this.form.description_en,
+            short_name: this.form.short_name_en,
             locale: "en",
           },
         ],
       };
       this.$inertia.post(route("line.store"), data, {
-        onSuccess: (page) => {},
+        onSuccess: (page) => { },
         onError: (errors) => {
           console.log(errors);
         },
@@ -147,6 +157,4 @@ export default {
   },
 };
 </script>
-<style lang="css" scoped>
-
-</style>
+<style lang="css" scoped></style>

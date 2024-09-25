@@ -24,7 +24,7 @@ class LineaController extends Controller
         $filter = ["search" => $request->search];
         return Inertia::render('Dashboard/Lines/Index', [
             'filters' => $filter,
-            'lines' => Linea::filter($filter)->with('translations','category')
+            'lines' => Linea::filter($filter)->with('translations')
             ->orderBy('created_at', 'desc')->paginate(env('PAGINATE')),
 
         ]);
@@ -78,6 +78,7 @@ class LineaController extends Controller
                 foreach ($request["tranlations"] as $key => $value) {
                     $data[$value["locale"]] = $value;
                 }
+                \Log::debug($data);
                 $linea = Linea::create($data);
                 return Redirect::route('line');
             } catch (\Exception $e) {
@@ -150,6 +151,7 @@ class LineaController extends Controller
                     DB::table("linea_translations")->where("linea_id", "=", $id)
                         ->where("locale", "=", $value['locale'])->update([
                         "name" => $value["name"],
+                        "short_name" => $value["short_name"],
                         "description" => $value["description"],
                     ]);
                 }

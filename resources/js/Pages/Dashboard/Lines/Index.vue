@@ -65,13 +65,13 @@
                 class="px-4 py-2 bg-gray-500"
                 style="background-color: #f8f8f8"
               >
-                Linea
+                Nombre
               </th>
               <th
                 class="px-4 py-2 bg-gray-500"
                 style="background-color: #f8f8f8"
               >
-                Categoria
+                Tipo
               </th>
               <th class="px-4 py-2" style="background-color: #f8f8f8">
                 Descripción
@@ -85,7 +85,7 @@
             <template v-for="(item, index) in lines?.data" :key="index">
               <tr class="hover:bg-gray-100 border-b border-gray-200 py-2">
                 <td class="px-4 py-2">{{ item.name }}</td>
-                <td class="px-4 py-2">{{ item.category.name }}</td>
+                <td class="px-4 py-2">{{ item.category_id == 1?'linea':'cabina'}}</td>
                 <td class="px-4 py-2">
                   {{ item.description.slice(0, 60) }}...
                 </td>

@@ -10,25 +10,11 @@
         class="my-4 w-3/4 mx-auto shadow flex flex-col space-y-5 bg-white p-5"
       >
         <JetValidationError></JetValidationError>
-        <p class="text-center uppercase">REGISTRO salon</p>
+        <p class="text-center uppercase">REGISTRO salon sxx</p>
         <div class="flex flex-col md:flex-row md:space-x-2">
           <div class="flex-1">
             <Label>Nombre</Label>
             <JetInput v-model="form.name"></JetInput>
-          </div>
-          <div class="flex-1">
-            <Label>Distrito</Label>
-            <JetInput v-model="form.district"></JetInput>
-          </div>
-        </div>
-        <div class="flex flex-col md:flex-row md:space-x-2">
-          <div class="flex-1">
-            <Label>Ciudad</Label>
-            <JetInput v-model="form.city"></JetInput>
-          </div>
-          <div class="flex-1">
-            <Label>País</Label>
-            <JetInput v-model="form.country"></JetInput>
           </div>
         </div>
         <div class="">
@@ -80,10 +66,7 @@ export default {
     return {
       form: this.$inertia.form({
         name: "",
-        district: "",
-        city: '',
         address: "",
-        country: "PERÚ",
         lat: "",
         lng: "",
       }),

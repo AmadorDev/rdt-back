@@ -9,13 +9,24 @@
         <p class="text-center">EDITAR PRODUCTO</p>
         <JetValidationError></JetValidationError>
 
-        <div class="">
-          <Label>Linea</Label>
-          <select v-model="form.linea_id" class="w-full h-9">
-            <template v-for="(item, index) in lines" :key="index">
-              <option :value="item.id">{{ item.name }}</option>
-            </template>
-          </select>
+        <div class="flex justify-between space-x-3">
+          <div class="w-full">
+            <Label>Linea</Label>
+            <select v-model="form.line_id" class="w-full h-9">
+              <template v-for="(item, index) in lines" :key="index">
+                <option :value="item.id">{{ item.name }}</option>
+              </template>
+            </select>
+          </div>
+          <div class="w-full">
+            <Label>Categoria</Label>
+            <select v-model="form.category_id" class="w-full h-9">
+              <option value="1">Shampoo</option>
+              <option value="2">Tratamientos, Mascarilla y Acondicionador</option>
+              <option value="3">Aceites y Serúms Capilares</option>
+              <option value="4">Rutinas profesionales para todos</option>
+            </select>
+          </div>
         </div>
 
         <!-- <div class="flex flex-col md:flex-row md:space-x-2">
@@ -43,26 +54,27 @@
 
         <div class="">
           <Label>Descripción </Label>
-          <JetTextAreaVue v-model="form.description"></JetTextAreaVue>
+          <CkeditorCustom v-model="form.description"></CkeditorCustom>
         </div>
         <div class="">
           <Label>Descripción en inglés</Label>
-          <JetTextAreaVue v-model="form.description_en"></JetTextAreaVue>
+
+          <CkeditorCustom v-model="form.description_en"></CkeditorCustom>
         </div>
 
         <div>
-          <Button class="btn-sm">ACTUALIZAR</Button>
+          <Button class="btn-sm mt-3">ACTUALIZAR</Button>
         </div>
       </div>
     </form>
-    
+
   </AppLayout>
-  
+
 </template>
 <script>
 import InputError from "@/Jetstream/InputError";
 import Button from "@/Jetstream/Button";
-
+import CkeditorCustom from '@/components/lasaga/CkEditorCustom.vue';
 import AppLayout from "@/Layouts/LayoutDashboard.vue";
 import Label from "@/Jetstream/Label";
 import JetInput from "@/Jetstream/Input.vue";
@@ -73,7 +85,7 @@ import ItemCrumb from '@/components/ItemCrumb.vue';
 export default {
   props: {
     errors: Object,
-    lines:Object,
+    lines: Object,
     product: Object,
   },
   components: {
@@ -83,17 +95,18 @@ export default {
     Label,
     JetInput,
     JetTextAreaVue,
-    JetValidationError,ItemCrumb
+    JetValidationError, ItemCrumb, CkeditorCustom
   },
   data() {
     return {
-       
+
       form: this.$inertia.form({
-        linea_id: this.product.linea_id,
-        name: this.product.translations.filter(item =>item.locale === 'es')[0].name,
-        name_en: this.product.translations.filter(item =>item.locale === 'en')[0].name,
-        description: this.product.translations.filter(item =>item.locale === 'es')[0].description,
-        description_en: this.product.translations.filter(item =>item.locale === 'en')[0].description,
+        category_id: this.product.subcategory_id,
+        line_id: this.product.line_id,
+        name: this.product.translations.filter(item => item.locale === 'es')[0].name,
+        name_en: this.product.translations.filter(item => item.locale === 'en')[0].name,
+        description: this.product.translations.filter(item => item.locale === 'es')[0].description,
+        description_en: this.product.translations.filter(item => item.locale === 'en')[0].description,
         photo: "",
       }),
     };
@@ -101,7 +114,8 @@ export default {
   methods: {
     update() {
       let data = {
-        linea_id: this.form.linea_id,
+        category_id: this.form.category_id,
+        line_id: this.form.line_id,
         photo: this.form.photo,
         tranlations: [
           {
@@ -116,8 +130,8 @@ export default {
           },
         ],
       };
-      this.$inertia.post(route("product.update",this.product.id), data, {
-        onSuccess: (page) => {},
+      this.$inertia.post(route("product.update", this.product.id), data, {
+        onSuccess: (page) => { },
         onError: (errors) => {
           console.log(errors);
         },
@@ -126,5 +140,4 @@ export default {
   },
 };
 </script>
-<style lang="css" scoped>
-</style>
+<style lang="css" scoped></style>

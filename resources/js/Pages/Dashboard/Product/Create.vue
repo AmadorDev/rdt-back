@@ -9,24 +9,31 @@
         <p class="text-center">REGISTRO PRODUCTO</p>
         <JetValidationError></JetValidationError>
 
-        <div class="">
-          <Label>Linea</Label>
-          <select v-model="form.linea_id" class="w-full h-9">
-            <template v-for="(item, index) in lines" :key="index">
-              <option :value="item.id">{{ item.name }}</option>
-            </template>
-          </select>
+        <div class="flex justify-between space-x-3">
+          <div class="w-full">
+            <Label>Linea</Label>
+            <select v-model="form.line_id" class="w-full h-9">
+              <template v-for="(item, index) in lines" :key="index">
+                <option :value="item.id">{{ item.name }}</option>
+              </template>
+            </select>
+          </div>
+          <div class="w-full">
+            <Label>Categoria</Label>
+            <select v-model="form.category_id" class="w-full h-9">
+              <option value="1">Shampoo</option>
+              <option value="2">Tratamientos, Mascarilla y Acondicionador</option>
+              <option value="3">Aceites y Serúms Capilares</option>
+              <option value="4">Rutinas profesionales para todos</option>
+            </select>
+          </div>
         </div>
 
         <div class="flex flex-col md:flex-row md:space-x-2">
           <div class="flex-1">
-            
+
             <Label>Imagen</Label>
-            <JetInput
-            class="py-1 "
-              @input="form.photo = $event.target.files[0]"
-              type="file"
-            ></JetInput>
+            <JetInput class="py-1 " @input="form.photo = $event.target.files[0]" type="file"></JetInput>
           </div>
         </div>
 
@@ -43,24 +50,26 @@
 
         <div class="">
           <Label>Descripción </Label>
-          <JetTextAreaVue v-model="form.description"></JetTextAreaVue>
+          <CkeditorCustom v-model="form.description"></CkeditorCustom>
         </div>
         <div class="">
           <Label>Descripción en inglés</Label>
-          <JetTextAreaVue v-model="form.description_en"></JetTextAreaVue>
+          <CkeditorCustom v-model="form.description_en"></CkeditorCustom>
         </div>
-
         <div>
-          <Button class="btn-sm">REGISTRAR</Button>
+          <Button class="btn-sm mt-3">REGISTRAR</Button>
         </div>
       </div>
     </form>
   </AppLayout>
-  
+
 </template>
 <script>
+
 import InputError from "@/Jetstream/InputError";
 import Button from "@/Jetstream/Button";
+
+import CkeditorCustom from '@/components/lasaga/CkEditorCustom.vue';
 
 import AppLayout from "@/Layouts/LayoutDashboard.vue";
 import Label from "@/Jetstream/Label";
@@ -72,8 +81,8 @@ import ItemCrumb from '@/components/ItemCrumb.vue';
 export default {
   props: {
     errors: Object,
-    lines:Object,
-    
+    lines: Object,
+
   },
   components: {
     AppLayout,
@@ -82,24 +91,30 @@ export default {
     Label,
     JetInput,
     JetTextAreaVue,
-    JetValidationError,ItemCrumb
+    JetValidationError, ItemCrumb,
+    CkeditorCustom
   },
   data() {
     return {
       form: this.$inertia.form({
-        linea_id: "",
+        category_id: "1",
+        line_id: "1",
         name: "",
         name_en: "",
         description: "",
         description_en: "",
         photo: "",
       }),
+
     };
   },
+
+
   methods: {
     store() {
       let data = {
-        linea_id: this.form.linea_id,
+        category_id: this.form.category_id,
+        line_id: this.form.line_id,
         photo: this.form.photo,
         tranlations: [
           {
@@ -115,7 +130,7 @@ export default {
         ],
       };
       this.$inertia.post(route("product.store"), data, {
-        onSuccess: (page) => {},
+        onSuccess: (page) => { },
         onError: (errors) => {
           console.log(errors);
         },
@@ -123,6 +138,10 @@ export default {
     },
   },
 };
+
 </script>
-<style lang="css" scoped>
+<style>
+.ck-editor__editable_inline {
+  min-height: 300px;
+}
 </style>

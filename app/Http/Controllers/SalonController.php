@@ -44,11 +44,8 @@ class SalonController extends Controller
     public function store(Request $request)
     {
         $validator = \Validator::make($request->all(), [
-            'name' => ['required', 'max:50'],
-            'district' => ['required'],
-            'city' => ['required'],
-            'address' => ['required'],
-            'country' => ['required'],
+            'name' => ['required', 'max:100'],
+            'address' => ['required','max:200'],
             'lat' => ['required','regex:/^[-]?(([0-8]?[0-9])\.(\d+))|(90(\.0+)?)$/'],
             'lng' => ['required','regex:/^[-]?((((1[0-7][0-9])|([0-9]?[0-9]))\.(\d+))|180(\.0+)?)$/'],
         ]);
@@ -60,11 +57,8 @@ class SalonController extends Controller
         } else {
             try {
                 $salon = new Salon();
-                $salon->name = strtoupper($request->name);
-                $salon->district = $request->district;
-                $salon->city = $request->city;
+                $salon->name = ucfirst($request->name);
                 $salon->address = $request->address;
-                $salon->country = $request->country;
                 $salon->lat = $request->lat;
                 $salon->lng = $request->lng;
                 $salon->save();
@@ -111,10 +105,10 @@ class SalonController extends Controller
     {
         $validator = \Validator::make($request->all(), [
             'name' => ['required', 'max:50'],
-            'district' => ['required'],
-            'city' => ['required'],
+        
+     
             'address' => ['required'],
-            'country' => ['required'],
+     
             'lat' => ['required','regex:/^[-]?(([0-8]?[0-9])\.(\d+))|(90(\.0+)?)$/'],
             'lng' => ['required','regex:/^[-]?((((1[0-7][0-9])|([0-9]?[0-9]))\.(\d+))|180(\.0+)?)$/'],
         ]);
@@ -126,11 +120,8 @@ class SalonController extends Controller
         } else {
             try {
                 
-                $salon->name = strtoupper($request->name);
-                $salon->district = $request->district;
-                $salon->city = $request->city;
+                $salon->name = ucfirst($request->name);
                 $salon->address = $request->address;
-                $salon->country = $request->country;
                 $salon->lat = $request->lat;
                 $salon->lng = $request->lng;
                 $salon->save();

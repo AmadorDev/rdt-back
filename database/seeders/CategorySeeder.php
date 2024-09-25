@@ -15,10 +15,8 @@ class CategorySeeder extends Seeder
     public function run()
     {
         $categories = [
-            ["name"=>"HAIR COLOR"],
-            ["name"=>"HAIR CARE"],
-            ["name"=>"HAIR STYLING"],
-            ["name"=>"SALON TREATMENT"],
+            ["name"=>"LINEA"],
+            ["name"=>"CABINA"],
         ];
         Category::insert($categories);
         User::create(["name"=>"radiant","email"=>"radiant@gmail.com","password"=>\Hash::make('adminRdt@09')]);

@@ -17,8 +17,9 @@ class CreateProductsTable extends Migration
             $table->id();
             $table->string("slug", 80)->unique();
             $table->boolean("status")->default(true);
-            $table->unsignedBigInteger('linea_id');
-            $table->foreign('linea_id')->references('id')->on('lineas')
+            $table->integer('subcategory_id');
+            $table->unsignedBigInteger('line_id');
+            $table->foreign('line_id')->references('id')->on('lineas')
                 ->constrained()
                 ->onUpdate('cascade')
                 ->onDelete('cascade');

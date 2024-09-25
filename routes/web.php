@@ -19,6 +19,7 @@ use App\Http\Controllers\EventController;
 use App\Http\Controllers\GaleryController;
 use App\Http\Controllers\LatestReleaseController;
 use App\Http\Controllers\BannerController;
+use App\Http\Controllers\CabController;
 
 /*
 |--------------------------------------------------------------------------
@@ -45,7 +46,7 @@ Route::get('/', function () {
 //     return Inertia::render('Dashboard');
 // })->name('dashboard');
 
-Route::group(['middleware' => ['auth:sanctum']], function(){
+Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::get("dashboard", [DashboardController::class, "index"])->name('dashboard');
 
@@ -86,27 +87,43 @@ Route::group(['middleware' => ['auth:sanctum']], function(){
     Route::post("lines/hair-type/update/{info}", [InfoController::class, "update"])->name('hair_type.update');
     Route::delete("lines/hair-type/destroy/{info}", [InfoController::class, "destroy"])->name('hair_type.destroy');
 
-      
+
     Route::get("lines/videos", [LineaVideoController::class, "index"])->name('video');
     Route::get("lines/videos/create/{line}", [LineaVideoController::class, "create"])->name('video.add');
     Route::post("lines/videos", [LineaVideoController::class, "store"])->name('video.store');
     Route::get("lines/videos/edit/{id}", [LineaVideoController::class, "edit"])->name('video.edit');
     Route::put("lines/videos/update/{line}", [LineaVideoController::class, "update"])->name('video.update');
     Route::delete("lines/videos/destroy/{line}", [LineaVideoController::class, "destroy"])->name('video.destroy');
-   
 
 
 
-    Route::get("products", [ProductController::class, "index"])->name('product');
-    Route::get("products/create", [ProductController::class, "create"])->name('product.add');
-    Route::post("products", [ProductController::class, "store"])->name('product.store');
-    Route::get("products/edit/{product}", [ProductController::class, "edit"])->name('product.edit');
-    Route::post("products/update/{product}", [ProductController::class, "update"])->name('product.update');
-    Route::delete("products/destroy/{product}", [ProductController::class, "destroy"])->name('product.destroy');
+    //product line
+    Route::get("products/lines", [ProductController::class, "index"])->name('product');
+    Route::get("products/lines/create", [ProductController::class, "create"])->name('product.add');
 
-    Route::get("products/image/{product}", [ProductController::class, "ImagesIndex"])->name('product.image');
-    Route::post("products/image/{product}", [ProductController::class, "ImagesStore"])->name('product_image.store');
-    Route::delete("products/image/{id}", [ProductController::class, "ImageDestroy"])->name('product_image.destroy');
+    Route::post("products/lines", [ProductController::class, "store"])->name('product.store');
+    Route::get("products/lines/edit/{product}", [ProductController::class, "edit"])->name('product.edit');
+    Route::post("products/lines/update/{product}", [ProductController::class, "update"])->name('product.update');
+    Route::delete("products/lines/destroy/{product}", [ProductController::class, "destroy"])->name('product.destroy');
+
+    //product cabin
+    Route::get("products/cabs", [CabController::class, "index"])->name('cab');
+    Route::get("products/cabs/create", [CabController::class, "create"])->name('cab.add');
+    Route::post("products/cabs", [CabController::class, "store"])->name('cab.store');
+    Route::get("products/cabs/edit/{product}", [CabController::class, "edit"])->name('cab.edit');
+    Route::post("products/cabs/update/{product}", [CabController::class, "update"])->name('cab.update');
+    Route::delete("products/cabs/destroy/{product}", [CabController::class, "destroy"])->name('cab.destroy');
+
+    Route::get("products/cabs/image/{product}", [CabController::class, "ImagesIndex"])->name('cab.image');
+    Route::post("products/cabs/image/{product}", [CabController::class, "ImagesStore"])->name('cab_image.store');
+    Route::delete("products/cabs/image/{id}", [CabController::class, "ImageDestroy"])->name('cab_image.destroy');
+
+
+
+
+    Route::get("products/lines/image/{product}", [ProductController::class, "ImagesIndex"])->name('product.image');
+    Route::post("products/lines/image/{product}", [ProductController::class, "ImagesStore"])->name('product_image.store');
+    Route::delete("products/lines/image/{id}", [ProductController::class, "ImageDestroy"])->name('product_image.destroy');
 
     Route::get("products/events", [ProductEventController::class, "index"])->name('product_event');
     Route::get("products/events/create/{product}", [ProductEventController::class, "create"])->name('product_event.add');
@@ -145,7 +162,7 @@ Route::group(['middleware' => ['auth:sanctum']], function(){
     Route::get("news/events", [EventController::class, "index"])->name('new_event');
     Route::get("news/events/add", [EventController::class, "create"])->name('new_event.add');
     Route::post("news/events", [EventController::class, "store"])->name('new_event.store');
-    
+
     Route::get("news/events/edit/{event}", [EventController::class, "edit"])->name('new_event.edit');
     Route::post("news/events/update/{event}", [EventController::class, "update"])->name('new_event.update');
     Route::delete("news/events/destroy/{event}", [EventController::class, "destroy"])->name('new_event.destroy');
@@ -168,6 +185,4 @@ Route::group(['middleware' => ['auth:sanctum']], function(){
     Route::post("banners", [BannerController::class, "store"])->name('banner.store');
     Route::post("banners/status/{banner}", [BannerController::class, "status"])->name('banner.status');
     Route::delete("banners/{banner}", [BannerController::class, "destroy"])->name('banner.destroy');
-    
 });
-  

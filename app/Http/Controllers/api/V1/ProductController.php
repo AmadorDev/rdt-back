@@ -8,12 +8,13 @@ use App\Models\Product;
 use App\Models\ProductEvent;
 use App\Models\ProductVideo;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use Validator;
 
 class ProductController extends Controller
 {
-    public $dir_name       = '/web/images/products/';
+    public $dir_name = '/web/images/products/';
     public $dir_name_event = '/web/images/products/events/';
 
     /**
@@ -22,12 +23,27 @@ class ProductController extends Controller
 
     public function index(Request $request)
     {
-        $data = product::paginate(env("PAGE_API"));
-        foreach ($data as $item) {
-            $files         = DB::table("products_image")->where("product_id", "=", $item->id)->get();
-            $item["files"] = count($files) > 0 ? $files[0] : $files;
+        \App::setLocale($request->locale);
+        $data = product::where("category_id", "=", 3)->paginate(env("PAGE_API"));
+        foreach ($data as $k => $item) {
+            $file = DB::table("products_image")->where("product_id", "=", $item->id)->value("url");
+            $data[$k]["image"] = $file;
+
         }
         return response()->json($data);
+    }
+
+    public function searchById(Request $request, $id)
+    {
+        try {
+            App::setLocale($request->locale);
+            $product = Product::find(intval($id));
+            $file = DB::table("products_image")->where("product_id", "=", $product->id)->value("url");
+            $product["image"] = $file;
+            return response()->json(["success" => true, "items" => $product]);
+        } catch (\Throwable $th) {
+            return response()->json(["success" => false]);
+        }
     }
 
     /**
@@ -37,7 +53,7 @@ class ProductController extends Controller
     {
         try {
             \App::setLocale($request->locale);
-            $files   = [];
+            $files = [];
             $product = Product::where("products.slug", "=", $product)
                 ->where("lineas.slug", "=", $line)
                 ->join("lineas", "lineas.id", "=", "products.linea_id")
@@ -52,11 +68,11 @@ class ProductController extends Controller
             }
 
             return response()->json([
-                "data"   => count($product) > 0 ? $product[0] : [],
+                "data" => count($product) > 0 ? $product[0] : [],
                 "images" => $files,
-                "rows"   => count($product),
+                "rows" => count($product),
                 "status" => "OK",
-                "line"   => $line,
+                "line" => $line,
             ]);
         } catch (Exception $e) {
             return response()->json(["message" => $e, "status" => 'Fail']);
@@ -69,13 +85,39 @@ class ProductController extends Controller
         try {
             \App::setLocale($request->locale);
             $linea = Linea::where("slug", "=", $slug)->get();
-            $id    = count($linea) > 0 ? $linea[0]->id : 0;
-            $data  = Product::where("linea_id", "=", $id)->paginate(env("PAGE_API"));
+            $id = count($linea) > 0 ? $linea[0]->id : 0;
+            $data = Product::where("linea_id", "=", $id)->paginate(env("PAGE_API"));
             foreach ($data as $k => $v) {
-                $file              = DB::table("products_image")->where("product_id", "=", $v["id"])->get();
+                $file = DB::table("products_image")->where("product_id", "=", $v["id"])->get();
                 $data[$k]["image"] = $file;
             }
 
+            return response()->json($data);
+        } catch (Exception $e) {
+            return response()->json(["error" => $e]);
+        }
+    }
+
+    public function ProductByCategory(Request $request, $category)
+    {
+        try {
+            \App::setLocale($request->locale);
+            $categoryId = 0;
+            if (strtolower($category) == "hair-color") {
+                $categoryId = 1;
+            } else if (strtolower($category) == 'hair-care') {
+                $categoryId = 2;
+            } else {
+                $categoryId = 0;
+            }
+            if ($categoryId == 0) {
+                return response()->json(["data" => []]);
+            }
+            $data = Product::where("category_id", "=", $categoryId)->paginate(env("PAGE_API"));
+            foreach ($data as $k => $v) {
+                $file = DB::table("products_image")->where("product_id", "=", $v["id"])->value("url");
+                $data[$k]["image"] = $file;
+            }
             return response()->json($data);
         } catch (Exception $e) {
             return response()->json(["error" => $e]);
@@ -93,14 +135,14 @@ class ProductController extends Controller
 
         $validator = Validator::make($request->all(), [
             'tranlations' => 'required',
-            'linea_id'    => 'required',
+            'linea_id' => 'required',
         ]);
 
         if ($validator->passes()) {
 
             try {
-                $req              = $request->only('linea_id', 'tranlations');
-                $data             = [];
+                $req = $request->only('linea_id', 'tranlations');
+                $data = [];
                 $data["linea_id"] = $req["linea_id"];
                 foreach ($req["tranlations"] as $key => $value) {
                     $data[$value["locale"]] = $value;
@@ -123,8 +165,8 @@ class ProductController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'product_id' => 'required',
-            'photo'      => 'required',
-            'photo.*'    => 'mimes:jpeg,jpg,png|max:' . env('SIZE_FILE'),
+            'photo' => 'required',
+            'photo.*' => 'mimes:jpeg,jpg,png|max:' . env('SIZE_FILE'),
         ]);
 
         $path = $request->getSchemeAndHttpHost() . $this->dir_name;
@@ -134,7 +176,7 @@ class ProductController extends Controller
                 if ($request->hasfile('photo')) {
                     foreach ($request->file('photo') as $p) {
                         $nameOrigin = $p->getClientOriginalName();
-                        $name       = rand(0, 100) . time() . '.' . $p->getClientOriginalExtension();
+                        $name = rand(0, 100) . time() . '.' . $p->getClientOriginalExtension();
 
                         $url = $path . $name;
                         $p->move(public_path() . $this->dir_name, $name);
@@ -185,19 +227,19 @@ class ProductController extends Controller
                 ->join("lineas", "lineas.id", "=", "products.linea_id")
                 ->select("product_events.*", "lineas.id as linea_id")
                 ->get();
-            $line    = [];
+            $line = [];
             $product = [];
             if (!$data->isEmpty()) {
-                $line    = Linea::find($data[0]->linea_id)->translate($request->locale)->name;
+                $line = Linea::find($data[0]->linea_id)->translate($request->locale)->name;
                 $product = Product::find($data[0]->product_id)->translate($request->locale)->name;
 
             }
 
             return response()->json(
-                ['data'   => count($data) > 0 ? $data[0] : [],
-                    "status"  => "OK",
-                    "rows"    => count($data),
-                    "line"    => $line,
+                ['data' => count($data) > 0 ? $data[0] : [],
+                    "status" => "OK",
+                    "rows" => count($data),
+                    "line" => $line,
                     "product" => $product,
                 ],
 
@@ -212,15 +254,15 @@ class ProductController extends Controller
 
         $validator = Validator::make($request->all(), [
             'tranlations' => 'required',
-            'product_id'  => 'required',
-            'date_event'  => 'required',
-            'photo'       => 'mimes:jpeg,jpg,png|max:' . env('SIZE_FILE'),
+            'product_id' => 'required',
+            'date_event' => 'required',
+            'photo' => 'mimes:jpeg,jpg,png|max:' . env('SIZE_FILE'),
         ]);
 
         if ($validator->passes()) {
             try {
-                $req                = $request->only('product_id', 'tranlations', 'date_event');
-                $data               = [];
+                $req = $request->only('product_id', 'tranlations', 'date_event');
+                $data = [];
                 $data["product_id"] = $req["product_id"];
                 $data["date_event"] = $req["date_event"];
                 foreach (json_decode($req["tranlations"], true) as $key => $value) {
@@ -228,16 +270,16 @@ class ProductController extends Controller
                 }
                 $linea = ProductEvent::create($data);
                 if ($request->hasfile('photo')) {
-                    $path       = $request->getSchemeAndHttpHost() . $this->dir_name_event;
-                    $p          = $request->file('photo');
+                    $path = $request->getSchemeAndHttpHost() . $this->dir_name_event;
+                    $p = $request->file('photo');
                     $nameOrigin = $p->getClientOriginalName();
-                    $name       = rand(0, 100) . time() . '.' . $p->getClientOriginalExtension();
+                    $name = rand(0, 100) . time() . '.' . $p->getClientOriginalExtension();
 
                     $url = $path . $name;
                     $p->move(public_path() . $this->dir_name_event, $name);
 
-                    $lineaEvent           = ProductEvent::find($linea->id);
-                    $lineaEvent->url      = $url;
+                    $lineaEvent = ProductEvent::find($linea->id);
+                    $lineaEvent->url = $url;
                     $lineaEvent->url_name = $name;
                     $lineaEvent->save();
                 }
@@ -274,17 +316,17 @@ class ProductController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'tranlations' => 'required',
-            'product_id'  => 'required',
-            'link'        => 'required',
+            'product_id' => 'required',
+            'link' => 'required',
 
         ]);
 
         if ($validator->passes()) {
             try {
-                $req                = $request->only('product_id', 'tranlations', 'link');
-                $data               = [];
+                $req = $request->only('product_id', 'tranlations', 'link');
+                $data = [];
                 $data["product_id"] = $req["product_id"];
-                $data["link"]       = explode("/", $req["link"])[3];
+                $data["link"] = explode("/", $req["link"])[3];
 
                 foreach ($req["tranlations"] as $key => $value) {
                     $data[$value["locale"]] = $value;

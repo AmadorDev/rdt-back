@@ -28,6 +28,25 @@ class LineaController extends Controller
         return response()->json($data);
     }
 
+
+    public function all(Request $request)
+    {
+        try {
+            $data = DB::table("linea_translations")
+                ->select("linea_translations.name", "linea_translations.short_name", "linea_translations.locale","lineas.category_id","lineas.id as line_id")
+                ->join("lineas", "linea_translations.linea_id", "=", "lineas.id")
+                ->get(); 
+            return response()->json(["data" => $data, "status" => "OK"], 200);
+    
+        } catch (\Exception $e) {
+            return response()->json(["message" => $e->getMessage(), "status" => "Fail"], 500);
+        }
+    }
+    
+
+
+
+
     public function Featureds(Request $request)
     {
         try {
@@ -42,15 +61,14 @@ class LineaController extends Controller
             }
 
             return response()->json(["data" => $data, "rows" => count($data), "status" => "OK"], 200);
-
         } catch (Exception $e) {
             return response()->json(["message" => $e, "status" => "Fail"], 500);
         }
     }
 
-/**
- ************************** detail **********
- **/
+    /**
+     ************************** detail **********
+     **/
     public function detail(Request $request, $slug)
     {
         \App::setLocale($request->locale);
@@ -65,9 +83,9 @@ class LineaController extends Controller
         return response()->json(["data" => count($lineas) ? $lineas[0] : [], "files" => $files, "rows" => count($lineas)]);
     }
 
-/**
- ************************** store **********
- **/
+    /**
+     ************************** store **********
+     **/
     public function store(Request $request)
     {
 
@@ -86,18 +104,17 @@ class LineaController extends Controller
                 }
                 $linea = Linea::create($data);
                 return response()->json(["data" => $linea, "msg" => "OK"]);
-            } catch (\Exception$e) {
+            } catch (\Exception $e) {
                 \Log::debug($e);
                 return response()->json(['error' => $e]);
             }
         }
         return response()->json(['error' => $validator->errors()->all()]);
-
     }
 
-/**
- ************************** store multi files **********
- **/
+    /**
+     ************************** store multi files **********
+     **/
     public function storeFiles(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -121,20 +138,19 @@ class LineaController extends Controller
                         DB::table("lineas_image")
                             ->insert(["name" => $name, "url" => $url, "linea_id" => $request["linea_id"]]);
                     }
-
                 }
                 return response()->json(['data' => $path, "msg" => "OK"]);
             }
 
             return response()->json(['error' => $validator->errors()->all()]);
-        } catch (\Exception$e) {
+        } catch (\Exception $e) {
             return response()->json(['error' => $e]);
         }
     }
 
-/**
- ************************** events to linea **********
- **/
+    /**
+     ************************** events to linea **********
+     **/
 
     public function getEventByLinea(Request $request, $id)
     {
@@ -142,9 +158,8 @@ class LineaController extends Controller
             \App::setLocale($request->locale);
             $events = LineaEvent::where("linea_id", "=", $id)->paginate(env("PAGE_API_LINE_EVENT"));
             foreach ($events as $key => $value) {
-                $imgs = DB::table("testing_images")->where("linea_event_id","=",$value->id)->get();
-                $events[$key]["images"]= $imgs;
-               
+                $imgs = DB::table("testing_images")->where("linea_event_id", "=", $value->id)->get();
+                $events[$key]["images"] = $imgs;
             }
             return response()->json(['data' => $events, "status" => "OK", "rows" => count($events)], 200);
         } catch (Exception $e) {
@@ -159,7 +174,7 @@ class LineaController extends Controller
             $data = LineaEvent::where("linea_events.slug", "=", $event)
                 ->where("lineas.slug", "=", $line)
                 ->join("lineas", "lineas.id", "=", "linea_events.linea_id")
-                ->select("linea_events.*", )
+                ->select("linea_events.*",)
                 ->get();
             $line = [];
             if (count($data) > 0) {
@@ -170,13 +185,15 @@ class LineaController extends Controller
             }
 
             return response()->json(
-                ['data' => count($data) > 0 ? $data[0] : [],
+                [
+                    'data' => count($data) > 0 ? $data[0] : [],
                     "status" => "OK",
                     "rows" => count($data),
                     "line" => count($line) > 0 ? $line[0] : [],
                 ],
 
-                200);
+                200
+            );
         } catch (Exception $e) {
             return response()->json(['message' => $e, "status" => "Fail"], 500);
         }
@@ -218,7 +235,7 @@ class LineaController extends Controller
                 }
 
                 return response()->json(["data" => $linea, "msg" => "OK"]);
-            } catch (\Exception$e) {
+            } catch (\Exception $e) {
                 \Log::debug($e);
                 return response()->json(['error' => $e]);
             }
@@ -226,9 +243,9 @@ class LineaController extends Controller
         return response()->json(['error' => $validator->errors()->all()]);
     }
 
-/**
- ************************** videos to linea **********
- **/
+    /**
+     ************************** videos to linea **********
+     **/
 
     public function getVideoByLinea(Request $request, $id)
     {
@@ -263,7 +280,7 @@ class LineaController extends Controller
                 $linea = LineaVideo::create($data);
 
                 return response()->json(["data" => $linea, "msg" => "OK"]);
-            } catch (\Exception$e) {
+            } catch (\Exception $e) {
                 \Log::debug($e);
                 return response()->json(['error' => $e]);
             }
@@ -276,16 +293,13 @@ class LineaController extends Controller
         try {
             \App::setLocale($request->locale);
             $img_default = $request->getSchemeAndHttpHost() . '/web/bg-image.png';
-            $imageLine =DB::table("lineas_image")
-            ->where("cover","=",1)
-            ->where('linea_id',"=",$line->id)->value('url');
-            $line["image"]= $imageLine?:$img_default;
+            $imageLine = DB::table("lineas_image")
+                ->where("cover", "=", 1)
+                ->where('linea_id', "=", $line->id)->value('url');
+            $line["image"] = $imageLine ?: $img_default;
             return response()->json(['line' => $line]);
         } catch (\Throwable $th) {
-            return response()->json(['error' => json_encode( $th->getMessage())]);
+            return response()->json(['error' => json_encode($th->getMessage())]);
         }
-        
-
     }
-
 }
