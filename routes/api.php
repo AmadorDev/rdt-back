@@ -27,14 +27,14 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
 
-//**************end salons********************
+    //**************end salons********************
 
-//******************categories*********************
+    //******************categories*********************
     Route::get("categories", [CategoryController::class, "index"])->name("api.cate");
     Route::post("categories", [CategoryController::class, "store"]);
 
-//**************lineas********************
-    Route::get("menu", [LineaController::class, "all"]);
+    //**************lineas********************
+
     Route::get("lineas", [LineaController::class, "index"]);
 
     Route::post("lineas", [LineaController::class, "store"]);
@@ -43,16 +43,20 @@ Route::prefix('v1')->group(function () {
     Route::post("lineas/events", [LineaController::class, "storeEvent"]);
     Route::post("lineas/videos", [LineaController::class, "storeVideo"]);
 
-//****************** products *********************
+    //****************** products *********************
     Route::get("products", [ProductController::class, "index"]);
+
+    //final used -------
+    Route::get("menu", [LineaController::class, "all"]);
+
     Route::get("products/lines/{line}", [ProductController::class, "ProductByLine"]);
     Route::get("products/subcategories/{id}", [ProductController::class, "ProductBySubCategory"]);
-
-
-
-
-
     Route::get("products/search/{id}", [ProductController::class, "searchById"]);
+    //final used-------
+
+
+
+
     Route::get("products/{category}", [ProductController::class, "ProductByCategory"]);
 
     Route::post("products", [ProductController::class, "store"]);
@@ -64,7 +68,7 @@ Route::prefix('v1')->group(function () {
     // ------event video------
     Route::post("products/videos", [ProductController::class, "storeVideo"]);
 
-//****************** users *********************
+    //****************** users *********************
     Route::post("users/register", [AuthController::class, "register"]);
     Route::post("users/login", [AuthController::class, "login"]);
 
@@ -120,7 +124,6 @@ Route::prefix('v1')->group(function () {
 
         //
         Route::get("test/{line}", [LineaController::class, "resultTest"]);
-
     });
 
     Route::post("products", [ProductController::class, "store"]);
@@ -130,7 +133,5 @@ Route::prefix('v1')->group(function () {
 
     Route::group(['middleware' => ['jwt.verify']], function () {
         Route::get("users/me", [AuthController::class, "getUser"]);
-
     });
-
 });

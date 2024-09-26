@@ -36,7 +36,7 @@ class ProductController extends Controller
     {
         try {
             App::setLocale($request->locale);
-            $product = Product::find(intval($id));
+            $product = Product::find(intval(1));
             $file = DB::table("products_image")->where("product_id", "=", $product->id)->value("url");
             $product["image"] = $file;
             return response()->json(["success" => true, "items" => $product]);
