@@ -28,7 +28,6 @@ class ProductController extends Controller
         foreach ($data as $k => $item) {
             $file = DB::table("products_image")->where("product_id", "=", $item->id)->value("url");
             $data[$k]["image"] = $file;
-
         }
         return response()->json($data);
     }
@@ -98,26 +97,58 @@ class ProductController extends Controller
         }
     }
 
-    public function ProductByCategory(Request $request, $category)
+
+
+
+    public function ProductByLine(Request $request, $line)
     {
         try {
-            \App::setLocale($request->locale);
-            $categoryId = 0;
-            if (strtolower($category) == "hair-color") {
-                $categoryId = 1;
-            } else if (strtolower($category) == 'hair-care') {
-                $categoryId = 2;
-            } else {
-                $categoryId = 0;
-            }
-            if ($categoryId == 0) {
-                return response()->json(["data" => []]);
-            }
-            $data = Product::where("category_id", "=", $categoryId)->paginate(env("PAGE_API"));
-            foreach ($data as $k => $v) {
-                $file = DB::table("products_image")->where("product_id", "=", $v["id"])->value("url");
-                $data[$k]["image"] = $file;
-            }
+            $data = DB::table("product_translations")
+                ->select(
+                    "product_translations.name",
+                    "product_translations.description",
+                    DB::raw('(SELECT url FROM products_image WHERE product_id = products.id LIMIT 1) as image_url')
+                )
+                ->join("products", "product_translations.product_id", "=", "products.id")
+                ->where("product_translations.locale", $request->locale)
+                ->where("products.line_id", $line)
+                ->get();
+
+
+            $line_ = DB::table("linea_translations")
+                ->select(
+                    "lineas.id",
+                    "linea_translations.name",
+                    "linea_translations.description",
+                    "lineas.category_id",
+                    DB::raw('(SELECT url FROM lineas_image WHERE linea_id = lineas.id LIMIT 1) as image_url')
+                )
+                ->join("lineas", "linea_translations.linea_id", "=", "lineas.id")
+                ->where("lineas.id", $line)
+                ->where("linea_translations.locale", $request->locale)
+                ->first();
+
+            return response()->json(["products" => $data, "line" => $line_]);
+        } catch (Exception $e) {
+            return response()->json(["error" => $e]);
+        }
+    }
+
+    public function ProductBySubCategory(Request $request, $id)
+    {
+        try {
+            $data = DB::table("product_translations")
+                ->select(
+                    "product_translations.name",
+                    "product_translations.description",
+                    DB::raw('(SELECT url FROM products_image WHERE product_id = products.id LIMIT 1) as image_url')
+                )
+                ->join("products", "product_translations.product_id", "=", "products.id")
+                ->where("product_translations.locale", $request->locale)
+                ->where("products.subcategory_id", $id)
+                ->get();
+
+
             return response()->json($data);
         } catch (Exception $e) {
             return response()->json(["error" => $e]);
@@ -187,7 +218,6 @@ class ProductController extends Controller
                     }
                     return response()->json(['data' => $path, "msg" => "OK"]);
                 }
-
             }
 
             return response()->json(['error' => $validator->errors()->all()]);
@@ -196,7 +226,7 @@ class ProductController extends Controller
         }
     }
 
-// *************************EVENT****************************************
+    // *************************EVENT****************************************
     //
 
     public function getEventByProductLine(Request $request, $line, $product)
@@ -232,18 +262,19 @@ class ProductController extends Controller
             if (!$data->isEmpty()) {
                 $line = Linea::find($data[0]->linea_id)->translate($request->locale)->name;
                 $product = Product::find($data[0]->product_id)->translate($request->locale)->name;
-
             }
 
             return response()->json(
-                ['data' => count($data) > 0 ? $data[0] : [],
+                [
+                    'data' => count($data) > 0 ? $data[0] : [],
                     "status" => "OK",
                     "rows" => count($data),
                     "line" => $line,
                     "product" => $product,
                 ],
 
-                200);
+                200
+            );
         } catch (Exception $e) {
             return response()->json(['message' => $e, "status" => "Fail"], 500);
         }
@@ -293,7 +324,7 @@ class ProductController extends Controller
         return response()->json(['message' => $validator->errors()->all()]);
     }
 
-//
+    //
     //***********************************VIDEOS*********************
     //
 
@@ -342,5 +373,4 @@ class ProductController extends Controller
         }
         return response()->json(['message' => $validator->errors()->all(), "status" => 'Fail']);
     }
-
 }

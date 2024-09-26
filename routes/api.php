@@ -45,6 +45,13 @@ Route::prefix('v1')->group(function () {
 
 //****************** products *********************
     Route::get("products", [ProductController::class, "index"]);
+    Route::get("products/lines/{line}", [ProductController::class, "ProductByLine"]);
+    Route::get("products/subcategories/{id}", [ProductController::class, "ProductBySubCategory"]);
+
+
+
+
+
     Route::get("products/search/{id}", [ProductController::class, "searchById"]);
     Route::get("products/{category}", [ProductController::class, "ProductByCategory"]);
 

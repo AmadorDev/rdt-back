@@ -33,16 +33,24 @@ class LineaController extends Controller
     {
         try {
             $data = DB::table("linea_translations")
-                ->select("linea_translations.name", "linea_translations.short_name", "linea_translations.locale","lineas.category_id","lineas.id as line_id")
+                ->select(
+                    "linea_translations.name",
+                    "linea_translations.short_name",
+                    "linea_translations.locale",
+                    "lineas.category_id",
+                    "lineas.id as line_id",
+                    DB::raw('(SELECT url FROM lineas_image WHERE linea_id = lineas.id LIMIT 1) as image_url')
+                )
                 ->join("lineas", "linea_translations.linea_id", "=", "lineas.id")
-                ->get(); 
+                ->get();
+
+
             return response()->json(["data" => $data, "status" => "OK"], 200);
-    
         } catch (\Exception $e) {
             return response()->json(["message" => $e->getMessage(), "status" => "Fail"], 500);
         }
     }
-    
+
 
 
 
