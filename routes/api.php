@@ -52,6 +52,7 @@ Route::prefix('v1')->group(function () {
     Route::get("products/lines/{line}", [ProductController::class, "ProductByLine"]);
     Route::get("products/subcategories/{id}", [ProductController::class, "ProductBySubCategory"]);
     Route::get("products/search/{id}", [ProductController::class, "searchById"]);
+    Route::get("lines/{line}", [LineaController::class, "show"]);
     //final used-------
 
 

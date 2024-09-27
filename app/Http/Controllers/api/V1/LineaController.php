@@ -52,6 +52,27 @@ class LineaController extends Controller
     }
 
 
+    public function show(Request $request,$id)
+    {
+        try {
+            $data = DB::table("linea_translations")
+                ->select(
+                    "linea_translations.name",
+                    "linea_translations.description",
+                    "lineas.id as line_id",
+                    DB::raw('(SELECT url FROM lineas_image WHERE linea_id = lineas.id LIMIT 1) as image_url')
+                )
+                ->join("lineas", "linea_translations.linea_id", "=", "lineas.id")
+                ->where("linea_translations.locale",$request->locale)
+                ->where("lineas.id",$id)
+                ->first();
+            return response()->json(["items" => $data, "success" => true], 200);
+        } catch (\Exception $e) {
+            return response()->json(["message" => $e->getMessage(), "success" => false], 500);
+        }
+    }
+
+
 
 
 
