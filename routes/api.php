@@ -28,7 +28,7 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('v1')->group(function () {
 
     //**************end salons********************
-
+    Route::get("salons", [SalonController::class, "getSalon"])->name("api.salon");
     //******************categories*********************
     Route::get("categories", [CategoryController::class, "index"])->name("api.cate");
     Route::post("categories", [CategoryController::class, "store"]);
@@ -78,7 +78,7 @@ Route::prefix('v1')->group(function () {
         Route::post("email", [PersonRegisterController::class, "store"]);
 
         //******************salons*********************
-        Route::get("salons", [SalonController::class, "getSalon"])->name("api.salon");
+ //       Route::get("salons", [SalonController::class, "getSalon"])->name("api.salon");
 
         //************************* MENU LINEAS ********************
         Route::get("menu/linea", [GeneralController::class, "getMenuLinea"]);
