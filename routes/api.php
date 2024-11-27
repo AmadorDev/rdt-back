@@ -122,6 +122,7 @@ Route::prefix('v1')->group(function () {
         //******************************?:-----------------latest------------------  //
         Route::get("latest", [NewController::class, "getLatest"]);
         Route::get("banners", [NewController::class, "getBannerDefault"]);
+  
 
         //
         Route::get("test/{line}", [LineaController::class, "resultTest"]);

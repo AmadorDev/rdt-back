@@ -21,7 +21,14 @@ class BannerController extends Controller
     public function index()
     {
         return Inertia::render('Dashboard/Banner/Index', [
-            'images' => Banner::all(),
+            'images' => Banner::where("type",1)->get(),
+        ]);
+    }
+
+    public function result()
+    {
+        return Inertia::render('Dashboard/Result/Index', [
+            'images' => Banner::where("type",2)->get(),
         ]);
     }
 
@@ -45,10 +52,11 @@ class BannerController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'photo' => 'required',
-            'photo.*' => 'mimes:jpeg,jpg,png|max:' . env('SIZE_FILE'),
+            'photo.*' => 'mimes:jpeg,jpg,png,webp|max:' . env('SIZE_FILE'),
         ]);
 
         $path = $request->getSchemeAndHttpHost() . $this->dirname_image;
+        $type = $request->input("type");
 
         try {
             if ($validator->passes()) {
@@ -59,7 +67,7 @@ class BannerController extends Controller
 
                         $url = $path . $name;
                         $p->move(public_path() .$this->dirname_image, $name);
-                        Banner::create(["name" => $name, "url" => $url]); 
+                        Banner::create(["name" => $name, "url" => $url,"type"=>$type]); 
                     }
 
                 }

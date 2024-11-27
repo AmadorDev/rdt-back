@@ -1,6 +1,6 @@
 <template>
     <div class="relative shadow-sm border-indigo-500 border-2 h-48">
-        <img class="w-full h-full" :src="image" />
+        <img class="w-full h-full object-cover" :src="image" />
         <div
             class="absolute top-0 bg-indigo-500 text-white p-2 w-10 hover:bg-indigo-800 text-center"
         >
@@ -25,4 +25,7 @@ export default {
 };
 </script>
 
-<style></style>
+<style>
+
+
+</style>

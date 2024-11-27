@@ -185,4 +185,9 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post("banners", [BannerController::class, "store"])->name('banner.store');
     Route::post("banners/status/{banner}", [BannerController::class, "status"])->name('banner.status');
     Route::delete("banners/{banner}", [BannerController::class, "destroy"])->name('banner.destroy');
+
+
+    //results
+
+    Route::get("results", [BannerController::class, "result"])->name('result');
 });

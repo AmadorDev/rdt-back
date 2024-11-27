@@ -57,6 +57,14 @@
       </div>
       </Link>
     </li>
+    <li @click="ToggleLink($event)" :class="$page.url.startsWith('/results') ? 'link-active' : ''">
+      <Link :href="route('result')">
+      <div class="link">
+        <i class="fa fa-tasks" aria-hidden="true"></i>
+        Resultados
+      </div>
+      </Link>
+    </li>
     <li @click="ToggleLink($event)" :class="$page.url.startsWith('/lines') ? 'link-active' : ''">
       <Link :href="route('line')">
       <div class="link">

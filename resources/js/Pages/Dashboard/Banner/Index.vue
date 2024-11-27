@@ -4,9 +4,31 @@
       <ItemCrumb title="Lineas" :active="true" link="line"></ItemCrumb>
       <ItemCrumb title="Imagenes" :active="false" link=""></ItemCrumb>
     </template> -->
-        <p class="text-center font-lg py-5 text-lg">Banners</p>
+        <p class="text-center font-lg py-5 text-lg">Banners ({{ images.length }})</p>
+       
+        <form @submit.prevent="store" class="center mx-auto md:w-1/2">
+            <div
+                class="mt-5 flex space-x-2 border-2 shadow-md bg-white border-indigo-400 justify-around text-center p-5"
+            >
+
+        
+
+                <div class="flex-1">
+                    <input
+                        class="form-control block w-full px-2 py-1 text-sm font-normal text-gray-700 bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
+                        id="formFileSm"
+                        type="file"
+                        @input="form.photo = $event.target.files[0]"
+                    />
+                </div>
+                <div class="flex-1 text-right">
+                    <Button>Guardar</Button>
+                </div>
+            </div>
+        </form>
+
         <div
-            class="flex flex-col md:flex-row md:space-x-2 flex-wrap justify-center items-center"
+            class="flex flex-col md:flex-row md:space-x-2 flex-wrap justify-center items-center mt-3"
         >
             <template v-for="(item, index) in images" :key="index">
                 <div
@@ -37,23 +59,6 @@
                 </div>
             </template>
         </div>
-        <form @submit.prevent="store" class="center mx-auto md:w-1/2">
-            <div
-                class="mt-5 flex space-x-2 border-2 shadow-md bg-white border-indigo-400 justify-around text-center p-5"
-            >
-                <div class="flex-1">
-                    <input
-                        class="form-control block w-full px-2 py-1 text-sm font-normal text-gray-700 bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
-                        id="formFileSm"
-                        type="file"
-                        @input="form.photo = $event.target.files[0]"
-                    />
-                </div>
-                <div class="flex-1 text-right">
-                    <Button>Guardar</Button>
-                </div>
-            </div>
-        </form>
     </AppLayout>
 </template>
 <script>
@@ -96,6 +101,7 @@ export default {
             let formData = new FormData();
             formData.append("photo[0]", this.form.photo);
             formData.append("linea_id", this.form.linea_id);
+            formData.append("type", 1);
 
             let config = { headers: { "Content-Type": "application/json" } };
             axios
